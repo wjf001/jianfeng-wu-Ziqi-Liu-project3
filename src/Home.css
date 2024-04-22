@@ -1,0 +1,17 @@
+.intro {
+    display: flex;
+    justify-content: center;
+    font-size: 30px;
+    text-align: left;
+}
+
+.rules {
+    display: contents;
+    justify-content: left;
+    text-align: left;
+    font-size: 30px;
+}
+
+.instruction {
+    font-size: 35px;
+}
