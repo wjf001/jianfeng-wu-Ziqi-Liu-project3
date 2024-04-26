@@ -23,24 +23,26 @@ function NavBar() {
     }
 
     return (
-        <div className="NavBarCon">
-            <div><NavLink to="/" >Home Page</NavLink></div>
-            {isAuthenticated ? (
-                <>
-                    <span>
-                        Hi, {user.username}
-                    </span>
-                    <button onClick={handleLogout}>Logout</button>
-                </>
+        <header className="header">
+          <nav className="navbar">
+            <NavLink to="/" exact>Home Page</NavLink>
+            {/* {isAuthenticated ? (
+              <>
+                <span>Hi, {user.username}</span>
+                <button onClick={handleLogout}>Logout</button>
+              </>
             ) : (
-                <>
-                    <div><NavLink to="/login">Log In</NavLink></div>
-                    <div><NavLink to="/register">Sign Up</NavLink></div>
-                </>
-            )}
-        </div>
-    )
-}
-
-
-export default NavBar
+              <> */}
+                <NavLink to="/login">Log In</NavLink>
+                <NavLink to="/register">Sign Up</NavLink>
+              {/* </>
+            )} */}
+          </nav>
+          <div className="logo">
+            <p className="nav-logo">Password Manager</p>
+          </div>
+        </header>
+      );
+    }
+    
+export default NavBar;

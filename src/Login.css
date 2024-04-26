@@ -1,0 +1,193 @@
+.login-container {
+    background: scroll;
+    padding: 150px 10%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.text-box {
+    width: 30%;
+    background-color: #d1e5fb;
+    border: none;
+    padding: 80px 10%;
+    border-radius: 10px;
+    opacity: 0;
+    animation: fadeIn 2s ease forwards;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+  
+@keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+}
+
+.log-form {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: white;
+    border-radius: 5px;
+}
+
+.login-form h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-family: "Protest Guerrilla", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+}
+
+.form-group {
+    margin-bottom: 15px;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+}
+
+.form-group label {
+    display: inline;
+    font-family: "Protest Guerrilla", sans-serif;
+    font-size: 20px;
+    margin-bottom: 5px;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.form-group input {
+    margin-right: 10px;
+    width: 50%;
+    padding: 10px;
+    font-size: 15px;
+    border: 1px solid #bbbbbd;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.form-group input:focus {
+    outline: 2px solid black;
+    width: 50%;
+    padding: 10px;
+    font-size: 15px;
+    border: 1px solid #bbbbbd;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+input::-ms-reveal {
+    display: none;
+}
+
+#form-group-password {
+    margin-bottom: 15px;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+}
+
+#form-group-password label {
+    display: inline;
+    font-family: "Protest Guerrilla", sans-serif;
+    font-size: 20px;
+    margin-bottom: 5px;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+#form-group-password .password-container {
+    display: inline-block;
+    margin-right: 10px;
+    width: 50%;
+    padding: 10px;
+    font-size: 15px;
+    border: 1px solid #bbbbbd;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    background-color: white;
+}
+
+
+#form-group-password .password-container:focus-within {
+    outline: 2px solid black;
+    display: inline-block;
+    margin-right: 10px;
+    width: 50%;
+    padding: 10px;
+    font-size: 15px;
+    border: 1px solid #bbbbbd;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    background-color: white;
+}
+
+#form-group-password input {
+    display: inline-block;
+    width: 90%;
+    height: 100%;
+    padding: 0px;
+    font-size: 15px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#form-group-password input:focus {
+    outline: none;
+    display: inline-block;
+    width: 90%;
+    height: 100%;
+    padding: 0px;
+    font-size: 15px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+/* Optionally hide the text and use an icon instead */
+.toggle-password::after {
+    display: inline-block;
+    width: 10%;
+    content: '\1F441'; /* Unicode for eye symbol */
+}
+
+.toggle-password {
+    display: inline-block;
+    width: 10%;
+}
+
+.form-group button {
+    margin: 0 10px;
+    font-family: "Protest Guerrilla", sans-serif;
+    font-size: 1em;
+    display: block;
+    width: 150px;
+    padding: 10px;
+    margin: 5px auto;
+    background-color: #3344c8;
+    color: white;
+    border-radius: 15px;
+    cursor: pointer;
+}
+
+.form-group button:hover {
+    opacity: 0.7;
+}
+
+.error-message {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: "Poppins", sans-serif;
+    font-size: 15px;
+    font-weight: 800;
+    color: rgb(109, 5, 3);
+}
+

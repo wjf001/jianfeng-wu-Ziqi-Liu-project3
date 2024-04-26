@@ -1,0 +1,264 @@
+@import url('https://fonts.googleapis.com/css2?family=Jersey+10&family=Jersey+25&family=Katibeh&family=Platypi:ital,wght@0,300..800;1,300..800&family=Protest+Guerrilla&family=Protest+Riot&family=Slabo+27px&display=swap');
+
+.account-container {
+    background: scroll;
+    padding: 100px 10%;
+}
+  
+.account-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+  
+.account-header h1 {
+    font-family: "Platypi", serif;
+    font-optical-sizing: auto;
+    font-weight: 600;
+    font-style: normal;
+}
+  
+.error-message {
+    color: red;
+    font-family: "Poppins", sans-serif;
+    font-size: 18px;
+    font-weight: 800;
+    margin-bottom: 20px;
+}
+  
+.account-list {
+    font-family: "Platypi", serif;
+    list-style-type: none;
+    padding: 0;
+}
+  
+.account-list li {
+    font-family: "Platypi", serif;
+    background-color: #f2f2f2;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    font-family: "Poppins", sans-serif;
+    font-size: 16px;
+}
+  
+.account-list li button {
+    margin-top: 10px;
+    margin-left: 10px;
+    padding: 5px 10px;
+    font-family: "Platypi", serif;
+    font-size: 14px;
+    background-color: #3344c8;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+  
+.account-list li button:hover {
+    opacity: 0.7;
+}
+  
+.account-form {
+    margin-top: 30px;
+}
+
+.account-form h2 {
+    font-family: "Platypi", serif;
+    font-size: 24px;
+    font-weight: 800;
+    font-style: normal;
+    margin-bottom: 15px;
+}
+  
+.account-form .form-group {
+    margin-bottom: 15px;
+    width: 200px;
+}
+
+.account-form .form-group label {
+    display: inline;
+    font-family: "Platypi", serif;
+    font-size: 18px;
+    margin-bottom: 5px;
+}
+
+.account-form .checkbox-group {
+    display: flex;
+    align-items: left;
+    margin-bottom: 8px;
+}
+
+.account-form .checkbox-group label {
+    font-family: "Platypi", serif;
+    font-size: 15px;
+    margin-right: 10px;
+}
+  
+.account-form input[type="text"],
+.account-form input[type="password"],
+.account-form input[type="number"] {
+    width: 200px;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+  
+.account-form button {
+    margin-right: 10px;
+    padding: 10px 20px;
+    font-family: "Platypi", serif;
+    font-size: 18px;
+    background-color: #3344c8;
+    color: white;
+    border: grey;
+    border-radius: 15px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+}
+  
+.account-form button:hover {
+    opacity: 0.7;
+}
+  
+.share-form {
+    font-family: "Platypi", serif;
+    margin-top: 30px;
+}
+  
+.share-form input[type="text"] {
+    width: 300px;
+    padding: 10px;
+    font-size: 16px;
+    font-family: "Platypi", serif;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-right: 10px;
+}
+  
+.share-form button {
+    padding: 10px 20px;
+    font-family: "Platypi", serif;
+    font-size: 18px;
+    background-color: #3344c8;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+  
+.share-form button:hover {
+    opacity: 0.7;
+}
+  
+.share-request {
+    background-color: #f2f2f2;
+    padding: 15px;
+    margin-top: 10px;
+    border-radius: 5px;
+    font-family: "Poppins", sans-serif;
+    font-size: 16px;
+}
+  
+.share-request button {
+    margin-left: 10px;
+    padding: 5px 10px;
+    font-family: "Platypi", serif;
+    font-size: 14px;
+    background-color: #3344c8;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+  
+.share-request button:hover {
+    opacity: 0.7;
+}
+
+.account-item {
+    font-family: "Platypi", serif;
+    display: flex;
+    align-items: center;
+    background-color: #ccc;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    padding: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);;
+}
+
+.account-checkbox {
+    margin-right: 10px;
+}
+
+.account-info {
+    flex-grow: 1;
+    font-family: "Platypi", serif;
+}
+
+.account-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.account-last-used {
+    font-family: "Platypi", serif;
+}
+
+.search-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+.search-form {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.search-form input[type="text"],
+.search-form .search-answer {
+    padding: 10px;
+    font-family: "Platypi", serif;
+    font-size: 15px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    cursor: pointer;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+    margin-right: 15px;
+    margin-left: 25px;
+}
+
+.search-form .search-btn,
+.search-form .copy-btn {
+    padding: 10px 20px;
+    font-family: "Platypi", serif;
+    font-size: 16px;
+    background-color: #3344c8;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 5px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+.search-form .search-btn:hover,
+.search-form .copy-btn:hover {
+  opacity: 0.7;
+}
+
+  
+.search-form input[type="submit"]:hover {
+    opacity: 0.7;
+}
+
+
+
