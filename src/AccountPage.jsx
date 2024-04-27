@@ -2,7 +2,6 @@ import axios from 'axios'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router';
 import './AccountPage.css';
-import NavBar from './NavBar';
 import Footer from './Footer';
 import './AccountPage.css';
 import LoggedInNavBar from './LoggedInNavBar';
@@ -19,6 +18,7 @@ function AccountPage() {
     editingAccountId: '',
   });
   const [errorMsgState, setErrorMsgState] = useState('');
+  const [isRequestSent, setIsRequestSent] = useState(false);
   const [username, setUsername] = useState('');
 
   const [includeAlphabet, setIncludeAlphabet] = useState(false);
@@ -27,13 +27,8 @@ function AccountPage() {
   const [passwordLength, setPasswordLength] = useState(8); // Default length
 
   const [shareUsername, setShareUsername] = useState('');  // For sharing passwords
-  const [shareRequests, setShareRequests] = useState([]);
 
   const [searchDomain, setSearchDomain] = useState('');
-
-  // const [searchResult, setSearchResult] = useState({ found: false, password: '', message: '' });
-
-
 
   async function getAllAccount() {
     const response = await axios.get('/api/account');
@@ -45,28 +40,6 @@ function AccountPage() {
     await getAllAccount();
   }
 
-  // async function onSubmit() {
-  //   setErrorMsgState('');
-  //   const payload = {
-  //     siteAddress: accountAddressState,
-  //     password: accountAddressState,
-  //     charset: [
-  //       includeAlphabet ? 'alphabet' : '',
-  //       includeNumerals ? 'numerals' : '',
-  //       includeSymbols ? 'symbols' : ''
-  //       ].filter(Boolean).join(','),
-  //       length: passwordLength
-  //   };
-
-  //   try {
-  //     const endpoint = editingState.isEditing ? `/api/account/${editingState.editingAccountId}` : '/api/account';
-  //     const method = editingState.isEditing ? 'put' : 'post';
-  //     const response = await axios[method](endpoint, payload);
-  //   } catch(error) {
-  //     setErrorMsgState(error.response && error.response.data ? error.response.data : "An error occurred");
-  //   }
-  // }
-
   async function onSubmit() {
     setErrorMsgState('');
     try {
@@ -75,16 +48,6 @@ function AccountPage() {
             includeNumerals ? 'numerals' : '',
             includeSymbols ? 'symbols' : ''
             ].filter(Boolean).join(',');
-        
-        // console.log(accountAddressState);
-        // let password = accountPasswordState;
-        // // Check if password needs to be generated for a new entry
-        // if (!password && !editingState.isEditing) {
-        //    password = generatePassword(passwordLength, charset);
-        //     // payload.password = undefined; // Trigger backend to generate password
-        // }
-
-        // console.log(password);
 
         const payload = {
           siteAddress: accountAddressState,
@@ -92,13 +55,6 @@ function AccountPage() {
           charset: charset,
           length: passwordLength
         };
-
-        // const endpoint = editingState.isEditing ? `/api/account/${editingState.editingAccountId}` : '/api/account';
-        // const method = editingState.isEditing ? 'put' : 'post';
-        // const response = await axios[method](endpoint, payload);
-        // console.log('Success:', response.data);
-
-
 
         if (editingState.isEditing) {
             await axios.put(`/api/account/${editingState.editingAccountId}`, payload);
@@ -116,24 +72,6 @@ function AccountPage() {
         }
       }
     }
-
-
-//         // Reset states after submission
-//         setAccountAddressState('');
-//         setAccountPasswordState('');
-//         setIncludeAlphabet(false);
-//         setIncludeNumerals(false);
-//         setIncludeSymbols(false);
-//         setPasswordLength(8);
-//         setEditingState({ isEditing: false, editingAccountId: '' });
-//         await getAllAccount();
-//     } catch (error) {
-//       if (error.response) {
-//         setErrorMsgState(error.response.data ? error.response.data : "An error occurred");
-//     } else {
-//         setErrorMsgState("An error occurred");
-//     }
-// }
 
   function resetForm() {
     setAccountAddressState('');
@@ -157,16 +95,9 @@ function AccountPage() {
     setAccountAddressState(siteAddress);
     setAccountPasswordState(password);
     setEditingState({
-      isEditing: true, 
-      editingAccountId: accountId
-  });
-  }
-
-  function onStart() {
-    isLoggedIn()
-      .then(() => {
-        getAllAccount()
-      })
+        isEditing: true, 
+        editingAccountId: accountId
+    });
   }
 
   function onCancel() {
@@ -176,12 +107,6 @@ function AccountPage() {
       isEditing: false, 
       editingAccountId: '',
   });
-  }
-
-
-  async function logout() {
-    await axios.post('/api/users/logout');
-    navigate('/');
   }
 
   async function isLoggedIn() {
@@ -194,12 +119,12 @@ function AccountPage() {
     }
   }
 
-  // useEffect(onStart, []);
   useEffect(() => {
     isLoggedIn().then(() => {
       getAllAccount();
       // fetchShareRequests();
     });
+    setIsRequestSent(false);
   }, []);
 
   function copyText(index) {
@@ -264,7 +189,7 @@ function AccountPage() {
     try {
       const response = await axios.post('/api/account/shareRequest', { toUsername: shareUsername });
       setShareUsername('');
-      setErrorMsgState('Share request sent');
+      setIsRequestSent(true);
     } catch (error) {
       setErrorMsgState('Failed to send share request: ' + (error.response ? error.response.data : 'Network error'));
     }
@@ -373,21 +298,6 @@ function AccountPage() {
             <input type="number" value={passwordLength} onChange={e => setPasswordLength(parseInt(e.target.value, 10))} min="4" max="50" />
           </div>
 
-          {/* <div className="form-group">
-            <label>
-              <input type="checkbox" checked={includeAlphabet} onChange={e => setIncludeAlphabet(e.target.checked)} />
-              Alphabet
-            </label>
-            <label>
-              <input type="checkbox" checked={includeNumerals} onChange={e => setIncludeNumerals(e.target.checked)} />
-              Numerals
-            </label>
-            <label>
-              <input type="checkbox" checked={includeSymbols} onChange={e => setIncludeSymbols(e.target.checked)} />
-              Symbols
-            </label>
-          </div> */}
-
           <div className="form-group">
             <div className="checkbox-group">
               <label>
@@ -419,21 +329,8 @@ function AccountPage() {
               onChange={(e) => setShareUsername(e.target.value)}
             />
             <button onClick={handleShareRequest}>Share Passwords</button>
+            {isRequestSent ? '   Request Successfully Sent!' : ''}
           </div>
-
-          {/* {shareRequests.map(request => (
-            <div className="share-request" key={request._id}>
-              {request.from} wants to share passwords with you.
-              <button onClick={() => handleResponseToShareRequest(request._id, true)}>Accept</button>
-              <button onClick={() => handleResponseToShareRequest(request._id, false)}>Reject</button>
-            </div>
-          ))} */}
-
-          {/* <form id="searchForm" onSubmit={searchPassword}>
-            <input type="text" id="textInput" />
-            <input id="searchInput" type="submit" />
-          </form> */}
-          {/* {searchDomain} */}
       </div>
       <Footer />
 
