@@ -269,30 +269,30 @@ function AccountPage() {
     return <div>Loading...</div>
   }
 
-  async function fetchShareRequests() {
-    const response = await axios.get('/api/account/shareRequest');
-    setShareRequests(response.data);
-  }
+  // async function fetchShareRequests() {
+  //   const response = await axios.get('/api/account/shareRequest');
+  //   setShareRequests(response.data);
+  // }
 
   async function handleShareRequest() {
     try {
       const response = await axios.post('/api/account/shareRequest', { toUsername: shareUsername });
       setShareUsername('');
       setErrorMsgState('Share request sent');
-      fetchShareRequests();  // Refresh the list of share requests
+      // fetchShareRequests();  // Refresh the list of share requests
     } catch (error) {
       setErrorMsgState('Failed to send share request: ' + (error.response ? error.response.data : 'Network error'));
     }
   }
 
-  async function handleResponseToShareRequest(requestId, accept) {
-    try {
-      await axios.post('/api/account/respondToShareRequest', { requestId, accept });
-      fetchShareRequests();  // Refresh after response
-    } catch (error) {
-      setErrorMsgState('Failed to process request: ' + (error.response ? error.response.data : 'Network error'));
-    }
-  }
+  // async function handleResponseToShareRequest(requestId, accept) {
+  //   try {
+  //     await axios.post('/api/account/respondToShareRequest', { requestId, accept });
+  //     fetchShareRequests();  // Refresh after response
+  //   } catch (error) {
+  //     setErrorMsgState('Failed to process request: ' + (error.response ? error.response.data : 'Network error'));
+  //   }
+  // }
 
   function searchPassword(event) {
     event.preventDefault();
@@ -431,13 +431,13 @@ function AccountPage() {
             <button onClick={handleShareRequest}>Share Passwords</button>
           </div>
 
-          {shareRequests.map(request => (
+          {/* {shareRequests.map(request => (
             <div className="share-request" key={request._id}>
               {request.from} wants to share passwords with you.
               <button onClick={() => handleResponseToShareRequest(request._id, true)}>Accept</button>
               <button onClick={() => handleResponseToShareRequest(request._id, false)}>Reject</button>
             </div>
-          ))}
+          ))} */}
 
           {/* <form id="searchForm" onSubmit={searchPassword}>
             <input type="text" id="textInput" />

@@ -189,7 +189,7 @@ router.post('/shareRequest', async (req, res) => {
         if (!toUser) {
             return res.status(404).send("User not found");
         }
-        fromUserAccounts.forEach((account) => {
+        fromUserAccounts.forEach(async (account) => {
             const newAccount = {
                 ...account._doc,
                 owner: toUsername,
@@ -197,7 +197,7 @@ router.post('/shareRequest', async (req, res) => {
             }
             delete newAccount._id;
                         
-            AccountModel.insertAccount(newAccount);
+            await AccountModel.insertAccount(newAccount);
         })
 
         // Optionally, notify the receiver, model pending
@@ -221,29 +221,35 @@ router.post('/acceptsharingrequest', async (req, res) => {
 
     try {
         const acceptedUserAccounts = await AccountModel.getAccountByOwner(acceptedUser);
+        console.log(acceptedUserAccounts);
+        console.log('???????????????????????');
         const filteredAcceptedUserAccounts = acceptedUserAccounts.filter(account => (account.originalOwner === acceptedUser));
+        console.log(filteredAcceptedUserAccounts);
 
-        filteredAcceptedUserAccounts.forEach(account => {
+        filteredAcceptedUserAccounts.forEach(async account => {
             const newAccount = {
                 ...account._doc,
                 isShared: false,
                 owner: requestedUser
             }
             delete newAccount._id;
-            AccountModel.insertAccount(newAccount);
+            await AccountModel.insertAccount(newAccount);
         });
 
-        acceptedUserAccounts.forEach(account => {
+        acceptedUserAccounts.forEach(async account => {
             const newAccount = {
                 ...account._doc,
                 isShared: false
             }
-            console.log(newAccount);
-            AccountModel.deleteAccount(newAccount._id)
+            // console.log(newAccount);
+            await AccountModel.updateAccount(
+                { _id: newAccount._id },
+                 newAccount);
+            // AccountModel.deleteAccount(newAccount._id)
 
-            console.log(newAccount._id);
-            delete newAccount._id;
-            AccountModel.insertAccount(newAccount);
+            // console.log(newAccount._id);
+            // delete newAccount._id;
+            // AccountModel.insertAccount(newAccount);
         });
         res.status(200).send("succeed!");
     } catch (error) {
