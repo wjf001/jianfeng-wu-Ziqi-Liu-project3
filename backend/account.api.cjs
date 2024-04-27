@@ -267,10 +267,12 @@ router.post('/rejectsharingrequest', async (req, res) => {
 
     try {
         const userAccounts = await AccountModel.getAccountByOwner(username);
-        userAccounts.forEach(account => {
-            account.isShared = true;
-            AccountModel.deleteAccount(account._id);
+        userAccounts.forEach(async account => {
+            if (account.isShared) {
+                await AccountModel.deleteAccount(account._id);
+            }
         });
+        res.status(200).send("Succeed!");
     } catch (error) {
         res.status(500).send("Error processing the request: " + error.message);
     }

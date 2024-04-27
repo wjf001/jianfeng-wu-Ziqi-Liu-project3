@@ -238,7 +238,7 @@ function AccountPage() {
         <>
           {originalOwner} requests to share their passowrds with you, do you want to accept it?
           <button className='account-item' onClick={onClickAccept(originalOwner)}>Accept</button>
-          <button className='account-item' onClick={onClickReject()}>Reject</button>
+          <button className='account-item' onClick={onClickReject}>Reject</button>
         </>
       )
     }
@@ -327,14 +327,28 @@ function AccountPage() {
       });
     }
 
-    console.log(accountListState);
-
     setAccountListState(newAccountListState);
 
   }
 
-  function onClickReject(event) {
-    
+  async function onClickReject(event) {
+    event.preventDefault();
+
+    await axios.post('/api/account/rejectsharingrequest', {
+    });
+
+    console.log(accountListState.length);
+    const newAccountListState = [];
+    for (let i = 0; i < accountListState.length; i++) {
+      if (!accountListState[i].isShared) {
+        newAccountListState.push({
+          ...accountListState[i],
+          isShared: false
+        });
+      }
+    }
+
+    setAccountListState(newAccountListState);
   }
 
 
