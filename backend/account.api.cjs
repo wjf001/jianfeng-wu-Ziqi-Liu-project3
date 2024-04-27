@@ -109,9 +109,6 @@ router.put('/:accountId', async function(req, res) {
 })
 
 
-
-// -> /pokemon/pikachu => req.params.pokemonName === pikachu
-// -> /pokemon/pikachu?food=banana
 router.get('/:accountId', async function(req, res) {
     const accountId = req.params.accountId;
 
@@ -122,9 +119,6 @@ router.get('/:accountId', async function(req, res) {
         res.status(400);
         return res.send(error);
     }
-
-    // res.status(404);
-    // return res.send("Pokemon with name " + pokemonName + " not found :(");
 })
 
 router.delete('/:accountId', async function(req, res) {
@@ -151,9 +145,7 @@ router.delete('/:accountId', async function(req, res) {
     }
 })
 
-// localhost:8000/api/pokemon?name=pikachu
 router.get('/', async function(req, res) {
-    console.log("---------------------------");
     const owner = cookieHelper.cookieDecryptor(req);
 
     if(!owner) {
@@ -177,15 +169,12 @@ router.get('/', async function(req, res) {
 router.post('/shareRequest', async (req, res) => {
     const { toUsername } = req.body;
     const fromUsername = cookieHelper.cookieDecryptor(req);
-    console.log('---------------------------');
     if (!fromUsername) {
         return res.status(401).send("You need to be logged in to share passwords!");
     }
 
     try {
         const fromUserAccounts = await AccountModel.getAccountByOwner(fromUsername);
-        const toUserAccounts = await AccountModel.getAccountByOwner(toUsername);
-
         const toUser = await UserModel.getUserByUsername(toUsername);
 
         if (!toUser) {
@@ -211,14 +200,13 @@ router.post('/shareRequest', async (req, res) => {
 
 
 
-// Endpoint to accept or reject a share request
+// Endpoint to accept a share request
 router.post('/acceptsharingrequest', async (req, res) => {
-    console.log("/acceptsharingrequest--------------------------");
     const { acceptedUser, requestedUser } = req.body;
     const username = cookieHelper.cookieDecryptor(req);
 
     if (!username) {
-        return res.status(401).send("You need to be logged in to respond to share requests!");
+        return res.status(401).send("You need to be logged in to respond to accept share requests!");
     }
 
     try {
@@ -255,7 +243,7 @@ router.post('/rejectsharingrequest', async (req, res) => {
     const username = cookieHelper.cookieDecryptor(req);
 
     if (!username) {
-        return res.status(401).send("You need to be logged in to respond to share requests!");
+        return res.status(401).send("You need to be logged in to respond to reject share requests!");
     }
 
     try {
