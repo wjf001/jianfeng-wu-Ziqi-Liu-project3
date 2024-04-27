@@ -198,7 +198,7 @@ function AccountPage() {
   useEffect(() => {
     isLoggedIn().then(() => {
       getAllAccount();
-      fetchShareRequests();
+      // fetchShareRequests();
     });
   }, []);
 
