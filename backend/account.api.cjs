@@ -98,7 +98,9 @@ router.put('/:accountId', async function(req, res) {
             return res.send("You do not own this account!");
         }
 
-        const accountUpdateResponse = await AccountModel.updateAccount(accountId, accountData);
+        const accountUpdateResponse = await AccountModel.updateAccount({
+            _id: accountId
+        }, accountData);
         return res.send('Successfully updated account ID ' + accountId)
     } catch (error) {
         res.status(400);

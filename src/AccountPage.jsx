@@ -230,8 +230,6 @@ function AccountPage() {
         </>
       )
     }
-
-    console.log("DDDDD")
     return accountListState.map((account, index) => (
       <li key={account._id} className="account-item">
         <input type="checkbox"  className='account-checkbox'/>
