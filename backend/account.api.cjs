@@ -143,7 +143,7 @@ router.delete('/:accountId', async function(req, res) {
             return res.send("You do not own this account!");
         }
 
-        const deleteAccountResponse = await AccountModel.deleteAccount(accountId);
+        const deleteAccountResponse = await AccountModel.deleteAccount({ _id: accountId });
         return res.send(deleteAccountResponse);
     } catch (error) {
         res.status(400);
@@ -243,11 +243,6 @@ router.post('/acceptsharingrequest', async (req, res) => {
             await AccountModel.updateAccount(
                 { _id: newAccount._id },
                  newAccount);
-            // AccountModel.deleteAccount(newAccount._id)
-
-            // console.log(newAccount._id);
-            // delete newAccount._id;
-            // AccountModel.insertAccount(newAccount);
         });
         res.status(200).send("succeed!");
     } catch (error) {
