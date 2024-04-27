@@ -45,6 +45,28 @@ function AccountPage() {
     await getAllAccount();
   }
 
+  // async function onSubmit() {
+  //   setErrorMsgState('');
+  //   const payload = {
+  //     siteAddress: accountAddressState,
+  //     password: accountAddressState,
+  //     charset: [
+  //       includeAlphabet ? 'alphabet' : '',
+  //       includeNumerals ? 'numerals' : '',
+  //       includeSymbols ? 'symbols' : ''
+  //       ].filter(Boolean).join(','),
+  //       length: passwordLength
+  //   };
+
+  //   try {
+  //     const endpoint = editingState.isEditing ? `/api/account/${editingState.editingAccountId}` : '/api/account';
+  //     const method = editingState.isEditing ? 'put' : 'post';
+  //     const response = await axios[method](endpoint, payload);
+  //   } catch(error) {
+  //     setErrorMsgState(error.response && error.response.data ? error.response.data : "An error occurred");
+  //   }
+  // }
+
   async function onSubmit() {
     setErrorMsgState('');
     try {
@@ -54,22 +76,29 @@ function AccountPage() {
             includeSymbols ? 'symbols' : ''
             ].filter(Boolean).join(',');
         
-        console.log(accountAddressState);
-        let password = accountPasswordState;
-        // Check if password needs to be generated for a new entry
-        if (!password && !editingState.isEditing) {
-           password = generatePassword(passwordLength, charset);
-            // payload.password = undefined; // Trigger backend to generate password
-        }
+        // console.log(accountAddressState);
+        // let password = accountPasswordState;
+        // // Check if password needs to be generated for a new entry
+        // if (!password && !editingState.isEditing) {
+        //    password = generatePassword(passwordLength, charset);
+        //     // payload.password = undefined; // Trigger backend to generate password
+        // }
 
-        console.log(password);
+        // console.log(password);
 
         const payload = {
           siteAddress: accountAddressState,
-          password: password,
+          password: accountPasswordState,
           charset: charset,
           length: passwordLength
         };
+
+        // const endpoint = editingState.isEditing ? `/api/account/${editingState.editingAccountId}` : '/api/account';
+        // const method = editingState.isEditing ? 'put' : 'post';
+        // const response = await axios[method](endpoint, payload);
+        // console.log('Success:', response.data);
+
+
 
         if (editingState.isEditing) {
             await axios.put(`/api/account/${editingState.editingAccountId}`, payload);
@@ -77,20 +106,44 @@ function AccountPage() {
             await axios.post('/api/account', payload);
         }
 
-        // Reset states after submission
-        setAccountAddressState('');
-        setAccountPasswordState('');
-        setIncludeAlphabet(false);
-        setIncludeNumerals(false);
-        setIncludeSymbols(false);
-        setPasswordLength(8);
-        setEditingState({ isEditing: false, editingAccountId: '' });
+        resetForm();
         await getAllAccount();
-    } catch (error) {
-        setErrorMsgState(error.response && error.response.data ? error.response.data : "An error occurred");
+      } catch (error) {
+        if (error.response) {
+          setErrorMsgState(error.response.data ? error.response.data: "error");
+        } else {
+          setErrorMsgState("error");
+        }
+      }
     }
-}
 
+
+//         // Reset states after submission
+//         setAccountAddressState('');
+//         setAccountPasswordState('');
+//         setIncludeAlphabet(false);
+//         setIncludeNumerals(false);
+//         setIncludeSymbols(false);
+//         setPasswordLength(8);
+//         setEditingState({ isEditing: false, editingAccountId: '' });
+//         await getAllAccount();
+//     } catch (error) {
+//       if (error.response) {
+//         setErrorMsgState(error.response.data ? error.response.data : "An error occurred");
+//     } else {
+//         setErrorMsgState("An error occurred");
+//     }
+// }
+
+  function resetForm() {
+    setAccountAddressState('');
+    setAccountPasswordState('');
+    setIncludeAlphabet(false);
+    setIncludeNumerals(false);
+    setIncludeSymbols(false);
+    setPasswordLength(8);
+    setEditingState({ isEditing: false, editingAccountId: '' });
+  }
 
   function updateAccountPassword(event) {
     setAccountPasswordState(event.target.value);
@@ -150,7 +203,6 @@ function AccountPage() {
   }, []);
 
   function copyText(index) {
-    console.log(accountListState[index]);
     navigator.clipboard.writeText(accountListState[index].password);
   }
 
@@ -166,23 +218,50 @@ function AccountPage() {
   //   </li>)
   // }
 
-  const accountListElement = accountListState.map((account, index) => (
-    <li key={account._id} className="account-item">
-      <input type="checkbox"  className='account-checkbox'/>
-      <div className="account-info">
-        <div className='account-site'>Site: {account.siteAddress}</div>
-        <div className='account-password'>Password: {account.password}</div>
-      </div>
-      <div className="account-last-used">
-        Last Used: {account.created}
-      </div>
-      <div className="account-actions">
-        <button onClick={() => deleteAccount(account._id)}>Delete</button>
-        <button onClick={() => setEditingAccount(account.siteAddress, account.password, account._id)}>Edit</button>
-        <button onClick={() => copyText(index)}>Copy password</button>
-      </div>
-    </li>
-  ));
+  const hasSharedSite = () => {
+    console.log(accountListState.length);
+    for (let i = 0; i < accountListState.length; i++) {
+      console.log(accountListState[i])
+      if (accountListState[i].isShared) {
+        return accountListState[i].originalOwner;
+      }
+    }
+
+    return false;
+  }
+
+  const accountListElement = () => {
+    const originalOwner = hasSharedSite();
+    console.log(originalOwner);
+    if (!!originalOwner) {
+      return (
+        <>
+          {originalOwner} requests to share their passowrds with you, do you want to accept it?
+          <button className='account-item' onClick={onClickAccept(originalOwner)}>Accept</button>
+          <button className='account-item' onClick={onClickReject()}>Reject</button>
+        </>
+      )
+    }
+
+    console.log("DDDDD")
+    return accountListState.map((account, index) => (
+      <li key={account._id} className="account-item">
+        <input type="checkbox"  className='account-checkbox'/>
+        <div className="account-info">
+          <div className='account-site'>Site: {account.siteAddress}</div>
+          <div className='account-password'>Password: {account.password}</div>
+        </div>
+        <div className="account-last-used">
+          Last Used: {account.created}
+        </div>
+        <div className="account-actions">
+          <button onClick={() => deleteAccount(account._id)}>Delete</button>
+          <button onClick={() => setEditingAccount(account.siteAddress, account.password, account._id)}>Edit</button>
+          <button onClick={() => copyText(index)}>Copy password</button>
+        </div>
+      </li>
+    ));
+  }
 
   const inputFieldTitleText = editingState.isEditing ? "Edit Account" : "Add new Account";
 
@@ -197,7 +276,6 @@ function AccountPage() {
 
   async function handleShareRequest() {
     try {
-      console.log(shareUsername);
       const response = await axios.post('/api/account/shareRequest', { toUsername: shareUsername });
       setShareUsername('');
       setErrorMsgState('Share request sent');
@@ -216,22 +294,6 @@ function AccountPage() {
     }
   }
 
-  function generatePassword(length, charset) {
-    const alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    const numerals = '0123456789';
-    const symbols = '!@#$%^&*()_+-=[]{}|;:,.<>?';
-    let characters = '';
-    if (charset.includes('alphabet')) characters += alphabet;
-    if (charset.includes('numerals')) characters += numerals;
-    if (charset.includes('symbols')) characters += symbols;
-  
-    let password = '';
-    for (let i = 0; i < length; i++) {
-      password += characters.charAt(Math.floor(Math.random() * characters.length));
-    }
-    return password;
-   }
-
   function searchPassword(event) {
     event.preventDefault();
 
@@ -245,6 +307,34 @@ function AccountPage() {
     }
 
     setSearchDomain('');
+  }
+
+  const onClickAccept = (requestedUser) => async (event) => {
+    event.preventDefault();
+
+    console.log(requestedUser);
+    await axios.post('/api/account/acceptsharingrequest', {
+      requestedUser,
+      acceptedUser: username
+    });
+
+    console.log(accountListState.length);
+    const newAccountListState = [];
+    for (let i = 0; i < accountListState.length; i++) {
+      newAccountListState.push({
+        ...accountListState[i],
+        isShared: false
+      });
+    }
+
+    console.log(accountListState);
+
+    setAccountListState(newAccountListState);
+
+  }
+
+  function onClickReject(event) {
+    
   }
 
 
@@ -271,7 +361,7 @@ function AccountPage() {
         </div>
 
         <ul className="account-list">
-          {accountListElement}
+          {accountListElement()}
         </ul>
 
         <div className="account-form">

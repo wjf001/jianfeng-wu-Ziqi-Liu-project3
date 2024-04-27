@@ -2,14 +2,15 @@ const cookieHelper = require('./cookie.helper.cjs');
 
 const express = require('express');
 const router = express.Router();
-const AccountModel = require('./db/account.model.cjs')
+const AccountModel = require('./db/account.model.cjs');
+const UserModel = require('./db/user.model.cjs');
+const crypto = require('crypto');
 
-function generatePassword(charset, length) {
+function generatePassword(length, charset) {
     const alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
     const numerals = '0123456789';
     const symbols = '!@#$%^&*()_+-=[]{}|;:,.<>?';
     let characters = '';
-    let password = '';
 
     if (charset.includes('alphabet')) {
         characters += alphabet;
@@ -21,8 +22,12 @@ function generatePassword(charset, length) {
         characters += symbols;
     }
 
+    let password = '';
+    const byteSize = Math.ceil(length/3);
+    const randomByte = crypto.randomBytes(byteSize);
     for (let i = 0; i < length; i++) {
-        password += characters.charAt(Math.floor(Math.random() * characters.length));
+        const randomVal = randomByte[i % byteSize];
+        password += characters[randomVal % characters.length];
     }
 
     return password;
@@ -43,7 +48,7 @@ router.post('/', async function(req, res) {
 
     let finalPassword = password;
     if (!password && charset && length >= 4 && length <= 50) {
-        finalPassword = generatePassword(charset, length);
+        finalPassword = generatePassword(parseInt(length), charset);
     }
 
     if (!finalPassword) {
@@ -54,6 +59,8 @@ router.post('/', async function(req, res) {
         siteAddress,
         password: finalPassword,
         owner: username,
+        isShared: false,
+        originalOwner: username,
     };
 
     try {
@@ -63,10 +70,13 @@ router.post('/', async function(req, res) {
         return res.status(400).send(error.message);
     }
 });
+
 // /api/pokemon/pikachu
 // --> pkId => pikachu
 router.put('/:accountId', async function(req, res) {
     const accountId = req.params.accountId;
+
+
     const accountData = req.body;
     const owner = cookieHelper.cookieDecryptor(req);
 
@@ -141,6 +151,7 @@ router.delete('/:accountId', async function(req, res) {
 
 // localhost:8000/api/pokemon?name=pikachu
 router.get('/', async function(req, res) {
+    console.log("---------------------------");
     const owner = cookieHelper.cookieDecryptor(req);
 
     if(!owner) {
@@ -162,7 +173,7 @@ router.get('/', async function(req, res) {
 
 // Endpoint to create a share request
 router.post('/shareRequest', async (req, res) => {
-    const { toUserId } = req.body;
+    const { toUsername } = req.body;
     const fromUsername = cookieHelper.cookieDecryptor(req);
     console.log('---------------------------');
     if (!fromUsername) {
@@ -170,24 +181,24 @@ router.post('/shareRequest', async (req, res) => {
     }
 
     try {
-        const fromUser = await AccountModel.getAccountByOwner(fromUsername);
-        const toUser = await AccountModel.getAccountById(toUserId);
-        console.log(fromUser, toUser);
+        const fromUserAccounts = await AccountModel.getAccountByOwner(fromUsername);
+        const toUserAccounts = await AccountModel.getAccountByOwner(toUsername);
+
+        const toUser = await UserModel.getUserByUsername(toUsername);
 
         if (!toUser) {
             return res.status(404).send("User not found");
         }
-
-        // Assume sharing requires inserting a new share request into both user records
-        const shareRequest = {
-            from: fromUser._id,
-            to: toUserId,
-            status: 'pending'
-        };
-
-        // Add share request to sender
-        fromUser.shareRequests.push(shareRequest);
-        await fromUser.save();
+        fromUserAccounts.forEach((account) => {
+            const newAccount = {
+                ...account._doc,
+                owner: toUsername,
+                isShared: true,
+            }
+            delete newAccount._id;
+                        
+            AccountModel.insertAccount(newAccount);
+        })
 
         // Optionally, notify the receiver, model pending
         res.status(200).send("Share request sent successfully");
@@ -199,7 +210,48 @@ router.post('/shareRequest', async (req, res) => {
 
 
 // Endpoint to accept or reject a share request
-router.post('/respondToShareRequest', async (req, res) => {
+router.post('/acceptsharingrequest', async (req, res) => {
+    console.log("/acceptsharingrequest--------------------------");
+    const { acceptedUser, requestedUser } = req.body;
+    const username = cookieHelper.cookieDecryptor(req);
+
+    if (!username) {
+        return res.status(401).send("You need to be logged in to respond to share requests!");
+    }
+
+    try {
+        const acceptedUserAccounts = await AccountModel.getAccountByOwner(acceptedUser);
+        const filteredAcceptedUserAccounts = acceptedUserAccounts.filter(account => (account.originalOwner === acceptedUser));
+
+        filteredAcceptedUserAccounts.forEach(account => {
+            const newAccount = {
+                ...account._doc,
+                isShared: false,
+                owner: requestedUser
+            }
+            delete newAccount._id;
+            AccountModel.insertAccount(newAccount);
+        });
+
+        acceptedUserAccounts.forEach(account => {
+            const newAccount = {
+                ...account._doc,
+                isShared: false
+            }
+            console.log(newAccount);
+            AccountModel.deleteAccount(newAccount._id)
+
+            console.log(newAccount._id);
+            delete newAccount._id;
+            AccountModel.insertAccount(newAccount);
+        });
+        res.status(200).send("succeed!");
+    } catch (error) {
+        res.status(500).send("Error processing the request: " + error.message);
+    }
+});
+
+router.post('/rejectsharingrequest', async (req, res) => {
     const { requestId, accept } = req.body;
     const username = cookieHelper.cookieDecryptor(req);
 
@@ -208,21 +260,15 @@ router.post('/respondToShareRequest', async (req, res) => {
     }
 
     try {
-        const user = await AccountModel.getAccountByOwner(username);
-        const request = user.shareRequests.id(requestId);
-
-        if (!request) {
-            return res.status(404).send("Request not found");
-        }
-
-        request.status = accept ? 'accepted' : 'rejected';
-        await user.save();
-
-        res.status(200).send(`Request ${accept ? 'accepted' : 'rejected'}`);
+        const userAccounts = await AccountModel.getAccountByOwner(username);
+        userAccounts.forEach(account => {
+            account.isShared = true;
+            AccountModel.deleteAccount(account._id);
+        });
     } catch (error) {
         res.status(500).send("Error processing the request: " + error.message);
     }
-});
+})
 
 
 module.exports = router;

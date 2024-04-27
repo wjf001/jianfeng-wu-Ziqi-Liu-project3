@@ -17,9 +17,6 @@ module.exports = new Schema({
         type: Date,
         default: Date.now
     },
-    shareRequests: [shareRequestSchema], // Array of share requests
-    sharedWith: [{ // Revised to hold ObjectId references for more robust data handling
-        type: Schema.Types.ObjectId,
-        ref: 'User'
-    }]
+    originalOwner: String,
+    isShared: Boolean
 }, { collection : 'passwordSpr2024' });
