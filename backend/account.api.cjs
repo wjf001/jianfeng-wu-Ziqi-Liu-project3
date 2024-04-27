@@ -221,10 +221,7 @@ router.post('/acceptsharingrequest', async (req, res) => {
 
     try {
         const acceptedUserAccounts = await AccountModel.getAccountByOwner(acceptedUser);
-        console.log(acceptedUserAccounts);
-        console.log('???????????????????????');
         const filteredAcceptedUserAccounts = acceptedUserAccounts.filter(account => (account.originalOwner === acceptedUser));
-        console.log(filteredAcceptedUserAccounts);
 
         filteredAcceptedUserAccounts.forEach(async account => {
             const newAccount = {
@@ -241,7 +238,6 @@ router.post('/acceptsharingrequest', async (req, res) => {
                 ...account._doc,
                 isShared: false
             }
-            // console.log(newAccount);
             await AccountModel.updateAccount(
                 { _id: newAccount._id },
                  newAccount);

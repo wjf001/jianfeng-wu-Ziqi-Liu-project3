@@ -250,6 +250,7 @@ function AccountPage() {
         <div className="account-info">
           <div className='account-site'>Site: {account.siteAddress}</div>
           <div className='account-password'>Password: {account.password}</div>
+          User: {account.originalOwner}
         </div>
         <div className="account-last-used">
           Last Used: {account.created}
